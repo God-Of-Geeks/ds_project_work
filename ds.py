@@ -16,7 +16,7 @@ count =0
 
 for file in os.listdir(path):
     f = path+"/"+file
-    if count<10:
+    if count<1:
         print(f) # Printing the files names taken from the directory to check which files are read from the directory.
         df = pd.read_csv(f, index_col=None, header=0) # Reading the csv files and adding it to dataframe df.
         li.append(df) # concatenating the next dataframe to the previous dataframe using "concat".
@@ -32,7 +32,8 @@ start_time = time.time()
 ### First Question ###
 
 final_df = tr_data.drop_duplicates(subset=['tx_hash']) # blk no is dropped duplicates dataframe
-dff = final_df.groupby(["block_number","block_time"]).gas.sum().reset_index()
+dff_hash = final_df.groupby(["block_number","block_time"])
+dff = dff_hash.gas.sum().reset_index()
 dff = dff.sort_values(by = "gas", kind='heapsort')
 dff.rename(columns={'gas': 'block_gas'}, inplace=True) # dff = first q
 # dff.to_csv('/Users/srikaramara/Desktop/first_q.csv')
@@ -43,7 +44,7 @@ print("--- First Question Ran in %s seconds ---" % (time.time() - start_time))
 ### Second Question ###
 
 start_time = time.time()
-tmp_1 = final_df.groupby(['block_number','block_time']).size().to_frame('transactions')
+tmp_1 = dff_hash.size().reset_index(name='transactions')
 tmp_1 = tmp_1.sort_values(by = "transactions", kind='heapsort')
 print(tmp_1)
 print("--- Second Question Ran in %s seconds ---" % (time.time() - start_time))
